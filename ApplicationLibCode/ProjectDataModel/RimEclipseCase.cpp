@@ -307,7 +307,7 @@ void RimEclipseCase::initAfterRead()
 //--------------------------------------------------------------------------------------------------
 ///
 //--------------------------------------------------------------------------------------------------
-RimEclipseView* RimEclipseCase::createAndAddReservoirView()
+RimEclipseView* RimEclipseCase::createAndAddReservoirView( bool addToViews )
 {
     RimEclipseViewCollection* viewColl = viewCollection();
     if ( !viewColl ) return nullptr;
