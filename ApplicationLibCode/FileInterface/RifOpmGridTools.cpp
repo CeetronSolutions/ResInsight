@@ -104,16 +104,6 @@ void RifOpmGridTools::importCoordinatesForRadialGrid( const std::string& gridFil
 //--------------------------------------------------------------------------------------------------
 ///
 //--------------------------------------------------------------------------------------------------
-size_t RifOpmGridTools::cellCount( const std::string& gridFilePath )
-{
-    Opm::EclIO::EGrid opmGrid( gridFilePath );
-
-    return opmGrid.totalNumberOfCells();
-}
-
-//--------------------------------------------------------------------------------------------------
-///
-//--------------------------------------------------------------------------------------------------
 bool RifOpmGridTools::importGrid( const std::string& gridFilePath, RigMainGrid* mainGrid, RigEclipseCaseData* caseData )
 {
     Opm::EclIO::EGrid opmGrid( gridFilePath );
