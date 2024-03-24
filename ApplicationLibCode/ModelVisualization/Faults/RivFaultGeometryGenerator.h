@@ -26,7 +26,6 @@
 
 namespace cvf
 {
-class StructGridInterface;
 class ModelBasicList;
 class Transform;
 class Part;
@@ -35,6 +34,8 @@ class Part;
 class RigNNCData;
 class RigConnectionContainer;
 class RigFault;
+class RigMainGrid;
+class RigGridBase;
 
 //==================================================================================================
 ///
@@ -44,7 +45,7 @@ class RigFault;
 class RivFaultGeometryGenerator : public cvf::Object
 {
 public:
-    RivFaultGeometryGenerator( const cvf::StructGridInterface* grid, const RigFault* fault, RigNNCData* nncData, bool computeNativeFaultFaces );
+    RivFaultGeometryGenerator( const RigGridBase* grid, const RigFault* fault, RigNNCData* nncData, bool computeNativeFaultFaces );
     ~RivFaultGeometryGenerator() override;
 
     void setCellVisibility( const cvf::UByteArray* cellVisibilities );
@@ -69,12 +70,13 @@ private:
 
 private:
     // Input
-    cvf::cref<cvf::StructGridInterface> m_grid;
-    cvf::cref<RigFault>                 m_fault;
-    cvf::cref<cvf::UByteArray>          m_cellVisibility;
-    cvf::ref<RigNNCData>                m_nncData;
+    cvf::cref<RigGridBase>     m_grid;
+    cvf::cref<RigFault>        m_fault;
+    cvf::cref<cvf::UByteArray> m_cellVisibility;
+    cvf::ref<RigNNCData>       m_nncData;
 
     bool m_computeNativeFaultFaces;
+    bool m_excludeHiddenSurfaces;
 
     // Created arrays
     cvf::ref<cvf::Vec3fArray> m_vertices;

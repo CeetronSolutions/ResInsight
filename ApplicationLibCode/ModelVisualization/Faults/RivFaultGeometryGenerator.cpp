@@ -22,6 +22,8 @@
 #include "RiaOpenMPTools.h"
 
 #include "RigFault.h"
+#include "RigHexIntersectionTools.h"
+#include "RigMainGrid.h"
 #include "RigNNCData.h"
 #include "RigNncConnection.h"
 
@@ -30,21 +32,17 @@
 #include "cvfPrimitiveSetIndexedUInt.h"
 #include "cvfStructGridGeometryGenerator.h"
 
-#include "cvfScalarMapper.h"
-
 #include <cmath>
 
 //--------------------------------------------------------------------------------------------------
 ///
 //--------------------------------------------------------------------------------------------------
-RivFaultGeometryGenerator::RivFaultGeometryGenerator( const cvf::StructGridInterface* grid,
-                                                      const RigFault*                 fault,
-                                                      RigNNCData*                     nncData,
-                                                      bool                            computeNativeFaultFaces )
+RivFaultGeometryGenerator::RivFaultGeometryGenerator( const RigGridBase* grid, const RigFault* fault, RigNNCData* nncData, bool computeNativeFaultFaces )
     : m_grid( grid )
     , m_fault( fault )
     , m_computeNativeFaultFaces( computeNativeFaultFaces )
     , m_nncData( nncData )
+    , m_excludeHiddenSurfaces( true )
 {
     m_quadMapper     = new cvf::StructGridQuadToCellFaceMapper;
     m_triangleMapper = new cvf::StuctGridTriangleToCellFaceMapper( m_quadMapper.p() );
@@ -157,6 +155,8 @@ void RivFaultGeometryGenerator::computeArrays( bool onlyShowFacesWithDefinedNeig
 
     cvf::Vec3d offset = m_grid->displayModelOffset();
 
+    auto mainGrid = m_grid->mainGrid();
+
     if ( onlyShowFacesWithDefinedNeighbors )
     {
         // Make sure the connection polygon is computed, as this is used as criteria for visibility
@@ -181,6 +181,13 @@ void RivFaultGeometryGenerator::computeArrays( bool onlyShowFacesWithDefinedNeig
         cvf::Vec3d cornerVerts[8];
         cvf::ubyte faceConn[4];
 
+        // Used to detect hidden surfaces
+        std::array<cvf::Vec3d, 4> cellFaceVertices;
+        cvf::BoundingBox          cellFaceBoundingBox;
+        std::array<int, 8>        cellFaceVertexState;
+        cvf::Vec3d                boundingBoxVertices[8];
+        std::array<cvf::Vec3d, 8> candidateCellVertices;
+
         // NB! We are inside a parallel section, do not use "parallel for" here
 #pragma omp for
         for ( int fIdx = 0; fIdx < static_cast<int>( faultFaces.size() ); fIdx++ )
@@ -203,9 +210,63 @@ void RivFaultGeometryGenerator::computeArrays( bool onlyShowFacesWithDefinedNeig
             m_grid->cellCornerVertices( cellIndex, cornerVerts );
             m_grid->cellFaceVertexIndices( face, faceConn );
 
-            for ( int n = 0; n < 4; n++ )
+            if ( m_excludeHiddenSurfaces && mainGrid )
             {
-                threadVertices[myThread].emplace_back( cvf::Vec3f( cornerVerts[faceConn[n]] - offset ) );
+                cellFaceBoundingBox.reset();
+
+                for ( int n = 0; n < 4; n++ )
+                {
+                    cellFaceVertices.at( n ).set( cornerVerts[faceConn[n]] );
+
+                    cellFaceBoundingBox.add( cellFaceVertices[n] );
+                }
+
+                // Expand the bounding box slightly to avoid coordinates at cell face
+                const double expandDistance = 1.0;
+                cellFaceBoundingBox.expand( expandDistance );
+                cellFaceBoundingBox.cornerVertices( boundingBoxVertices );
+                cellFaceVertexState.fill( 0 );
+
+                std::vector<size_t> cellCandidates = mainGrid->findIntersectingCells( cellFaceBoundingBox );
+                for ( size_t i = 0; i < 8; i++ )
+                {
+                    auto boundingBoxVertex = boundingBoxVertices[i];
+
+                    for ( size_t cellIndex : cellCandidates )
+                    {
+                        mainGrid->cellCornerVertices( cellIndex, candidateCellVertices.data() );
+
+                        if ( RigHexIntersectionTools::isPointInCell( cvf::Vec3d( boundingBoxVertex ), candidateCellVertices.data() ) )
+                        {
+                            if ( ( *m_cellVisibility )[cellIndex] )
+                            {
+                                cellFaceVertexState[i] = 1;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                bool isFaultFullyInsideVisibleCells = true;
+                for ( auto state : cellFaceVertexState )
+                {
+                    if ( state != 1 ) isFaultFullyInsideVisibleCells = false;
+                }
+
+                if ( isFaultFullyInsideVisibleCells ) continue;
+
+                for ( int n = 0; n < 4; n++ )
+                {
+                    threadVertices[myThread].emplace_back( cellFaceVertices[n] - offset );
+                }
+            }
+            else
+            {
+                for ( int n = 0; n < 4; n++ )
+                {
+                    threadVertices[myThread].emplace_back( cornerVerts[faceConn[n]] - offset );
+                }
             }
 
             // Keep track of the source cell index per quad
