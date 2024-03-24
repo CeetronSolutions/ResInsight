@@ -275,7 +275,7 @@ void RigCellFaceGeometryTools::extractConnectionsForFace( const RigFault::FaultF
         if ( candidateCellIndex == neighborCellIndex )
         {
             // Exclude direct neighbor
-            continue;
+            // continue;
         }
 
         if ( neighborCellIndex != std::numeric_limits<size_t>::max() )
