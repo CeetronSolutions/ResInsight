@@ -157,7 +157,7 @@ void RivFaultGeometryGenerator::computeArrays( bool onlyShowFacesWithDefinedNeig
 
     cvf::Vec3d offset = m_grid->displayModelOffset();
 
-    if ( onlyShowFacesWithDefinedNeighbors )
+    // if ( onlyShowFacesWithDefinedNeighbors )
     {
         // Make sure the connection polygon is computed, as this is used as criteria for visibility
         m_nncData->ensureAllConnectionDataIsProcessed();
@@ -200,8 +200,65 @@ void RivFaultGeometryGenerator::computeArrays( bool onlyShowFacesWithDefinedNeig
 
             if ( onlyShowFacesWithDefinedNeighbors && !hasConnection( cellIndex, face, connections, connIndices ) ) continue;
 
+            bool                    allConnectionsAreVisible = true;
+            size_t                  connectionCount          = 0;
+            std::vector<cvf::Vec3f> allVertices;
+
+            for ( auto i : connIndices )
+            {
+                if ( i >= connections.size() ) continue;
+
+                const auto& r = connections[i];
+
+                size_t candidate = std::numeric_limits<size_t>::max();
+
+                if ( r.c1GlobIdx() == cellIndex )
+                    candidate = r.c2GlobIdx();
+                else if ( r.c2GlobIdx() == cellIndex )
+                    candidate = r.c1GlobIdx();
+
+                if ( candidate < std::numeric_limits<size_t>::max() )
+                {
+                    connectionCount++;
+
+                    const auto& polygon = r.polygon();
+
+                    if ( !( *m_cellVisibility )[candidate] )
+                    {
+                        allConnectionsAreVisible = false;
+                    }
+                    else
+                    {
+                        // append polygon to allVertices
+                        allVertices.insert( allVertices.end(), polygon.begin(), polygon.end() );
+                    }
+                }
+            }
+
+            //            if ( connectionCount > 0 && allConnectionsAreVisible ) continue;
+
             m_grid->cellCornerVertices( cellIndex, cornerVerts );
             m_grid->cellFaceVertexIndices( face, faceConn );
+
+            bool allVerticesFound = true;
+            for ( int n = 0; n < 4; n++ )
+            {
+                const auto corner = cvf::Vec3f( cornerVerts[faceConn[n]] );
+
+                const double distanceThreshold = 0.1;
+
+                bool foundMatch = false;
+
+                for ( auto v : allVertices )
+                {
+                    auto length = ( corner - v ).lengthSquared();
+                    if ( length < distanceThreshold ) foundMatch = true;
+                }
+
+                if ( !foundMatch ) allVerticesFound = false;
+            }
+
+            if ( allVerticesFound ) continue;
 
             for ( int n = 0; n < 4; n++ )
             {
