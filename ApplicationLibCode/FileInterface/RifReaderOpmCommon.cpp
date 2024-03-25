@@ -256,8 +256,8 @@ void RifReaderOpmCommon::transferGeometry( Opm::EclIO::EGrid&  opmMainGrid,
     // same mapping as libecl
     const size_t cellMappingECLRi[8] = { 0, 1, 3, 2, 4, 5, 7, 6 };
 
-#pragma omp parallel for
-    for ( int opmCellIndex = 0; opmCellIndex < static_cast<int>( mainGrid->cellCount() ); opmCellIndex++ )
+    // #pragma omp parallel for
+    for ( int opmCellIndex = 0; opmCellIndex < static_cast<int>( localGrid->cellCount() ); opmCellIndex++ )
     {
         auto opmIJK = opmGrid.ijk_from_global_index( opmCellIndex );
 
