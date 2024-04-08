@@ -142,7 +142,7 @@ void RivWindowEdgeAxesOverlayItem::updateFromCamera( const Camera* camera )
     double domainMaxY = m_domainAxes == XY_AXES ? windowMaxInDomain.y() : windowMaxInDomain.z();
 
     int xTickMaxCount = m_windowSize.x() / ( 2 * m_textSize.x() );
-    int yTickMaxCount = m_windowSize.y() / ( 2 * m_textSize.x() );
+    int yTickMaxCount = m_windowSize.y() / ( 4 * m_textSize.y() );
 
     double                 minDomainXStepSize = ( domainMaxX - domainMinX ) / xTickMaxCount;
     caf::TickMarkGenerator xTickCreator( domainMinX, domainMaxX, minDomainXStepSize );
