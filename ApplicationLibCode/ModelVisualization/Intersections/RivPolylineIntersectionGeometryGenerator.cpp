@@ -102,8 +102,8 @@ void RivPolylineIntersectionGeometryGenerator::calculateArrays( cvf::UByteArray*
     const cvf::Vec3d maxHeightVec   = zAxisDirection * gridBBox.radius();
 
     // Weld vertices per polyline segment
-    // - Low welding distance, as the goal is to weld duplicate vertices
-    // - Number of buckets is set per segment, utilizing number of cells intersecting the segment
+    // - Low welding distance, as the goal is to weld duplicate vertices.
+    // - Number of buckets is set per segment, utilizing number of cells intersecting the segment.
     const double weldingDistance = 1.0e-3;
     const double weldingCellSize = 20.0 * weldingDistance;
 
