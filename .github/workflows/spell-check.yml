@@ -1,7 +1,9 @@
 name: Spell Check
 
 on:
-  - push
+  push:
+    branches:
+      - '**' # Ignore push events for tags: https://github.com/peter-evans/create-pull-request/blob/main/docs/examples.md#filtering-push-events
 
 jobs:
   build:
