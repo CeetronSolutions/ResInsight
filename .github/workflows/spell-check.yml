@@ -1,7 +1,9 @@
 name: Spell Check
 
 on:
-  - push
+  push:
+    branches:
+      - '**' # Ignore push events for tags: https://github.com/peter-evans/create-pull-request/blob/main/docs/examples.md#filtering-push-events
 
 jobs:
   build:
@@ -11,7 +13,7 @@ jobs:
       - uses: sobolevn/misspell-fixer-action@master
         with:
           options: "-rsvnuR ApplicationLibCode/"
-      - uses: peter-evans/create-pull-request@v5
+      - uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Fixes by misspell-fixer"

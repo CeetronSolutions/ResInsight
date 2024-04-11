@@ -171,7 +171,7 @@ void RimSummaryCaseCollection::addCase( RimSummaryCase* summaryCase )
 {
     summaryCase->nameChanged.connect( this, &RimSummaryCaseCollection::onCaseNameChanged );
 
-    if ( m_cases.empty() ) summaryCase->setShowRealizationDataSource( true );
+    summaryCase->setShowRealizationDataSource( m_cases.empty() );
 
     m_cases.push_back( summaryCase );
     m_cachedSortedEnsembleParameters.clear();
@@ -248,7 +248,9 @@ void RimSummaryCaseCollection::ensureNameIsUpdated()
         RiaEnsembleNameTools::EnsembleGroupingMode groupingMode = RiaEnsembleNameTools::EnsembleGroupingMode::FMU_FOLDER_STRUCTURE;
 
         QString ensembleName = RiaEnsembleNameTools::findSuitableEnsembleName( fileNames, groupingMode );
-        m_name               = ensembleName;
+        if ( m_name == ensembleName ) return;
+
+        m_name = ensembleName;
         caseNameChanged.send();
     }
 }
@@ -1162,6 +1164,8 @@ void RimSummaryCaseCollection::onCalculationUpdated()
 {
     m_dataVectorFolders->deleteCalculatedObjects();
     m_dataVectorFolders->updateFolderStructure( ensembleSummaryAddresses(), -1, m_ensembleId );
+
+    m_analyzer.reset();
 
     updateConnectedEditors();
 }

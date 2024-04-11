@@ -1,6 +1,9 @@
 name: clang-format
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**' # Ignore push events for tags: https://github.com/peter-evans/create-pull-request/blob/main/docs/examples.md#filtering-push-events
 
 jobs:
   clang-format-job:
@@ -36,7 +39,7 @@ jobs:
           cd Fwk/AppFwk
           find -name '*.h' -o -name '*.cpp' -o -name '*.inl' | grep -v gtest | xargs clang-format-15 -i
           git diff
-      - uses: peter-evans/create-pull-request@v5
+      - uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Fixes by clang-format"

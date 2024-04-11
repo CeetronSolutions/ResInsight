@@ -20,14 +20,12 @@
 
 #include "RiaApplication.h"
 #include "RiaLogging.h"
-
-#include "RicfCommandObject.h"
+#include "RiaPreferencesSummary.h"
 
 #include "RifEclipseSummaryTools.h"
 #include "RifMultipleSummaryReaders.h"
 #include "RifOpmCommonSummary.h"
 #include "RifProjectSummaryDataWriter.h"
-#include "RifReaderEclipseRft.h"
 #include "RifReaderEclipseSummary.h"
 #include "RifReaderOpmRft.h"
 #include "RifSummaryReaderMultipleFiles.h"
@@ -36,7 +34,6 @@
 #include "RimProject.h"
 #include "RimRftCase.h"
 #include "RimSummaryCalculationCollection.h"
-#include "RimTools.h"
 
 #include "cafPdmFieldScriptingCapability.h"
 #include "cafPdmObjectScriptingCapability.h"
@@ -102,6 +99,12 @@ QString RimFileSummaryCase::caseName() const
 //--------------------------------------------------------------------------------------------------
 void RimFileSummaryCase::createSummaryReaderInterfaceThreadSafe( RiaThreadSafeLogger* threadSafeLogger )
 {
+    // RimFileSummaryCase::findRelatedFilesAndCreateReader is a performance bottleneck. The function
+    // RifEclipseSummaryTools::getRestartFile() should be refactored to use opm-common instead of libecl.
+    // It is not possible to use restart files in ESMRY file format, see see ESmry::make_esmry_file()
+    //
+    // https://github.com/OPM/ResInsight/issues/11342
+
     m_fileSummaryReader =
         RimFileSummaryCase::findRelatedFilesAndCreateReader( summaryHeaderFilename(), m_includeRestartFiles, threadSafeLogger );
 
@@ -159,10 +162,10 @@ void RimFileSummaryCase::createRftReaderInterface()
 ///
 //--------------------------------------------------------------------------------------------------
 RifSummaryReaderInterface* RimFileSummaryCase::findRelatedFilesAndCreateReader( const QString&       headerFileName,
-                                                                                bool                 includeRestartFiles,
+                                                                                bool                 lookForRestartFiles,
                                                                                 RiaThreadSafeLogger* threadSafeLogger )
 {
-    if ( includeRestartFiles )
+    if ( lookForRestartFiles )
     {
         std::vector<QString>            warnings;
         std::vector<RifRestartFileInfo> restartFileInfos = RifEclipseSummaryTools::getRestartFiles( headerFileName, warnings );

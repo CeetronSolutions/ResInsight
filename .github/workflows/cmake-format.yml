@@ -1,6 +1,9 @@
 name: cmake-format
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**' # Ignore push events for tags: https://github.com/peter-evans/create-pull-request/blob/main/docs/examples.md#filtering-push-events
 
 jobs:
   cmake-format-job:
@@ -28,7 +31,7 @@ jobs:
           cd ..
 
           git diff
-      - uses: peter-evans/create-pull-request@v5
+      - uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Fixes by cmake-format"

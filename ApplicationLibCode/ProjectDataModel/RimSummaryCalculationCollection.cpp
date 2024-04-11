@@ -61,7 +61,11 @@ void RimSummaryCalculationCollection::updateDataDependingOnCalculations()
         if ( auto reader = summaryCase->summaryReader() )
         {
             reader->buildMetaData();
-            summaryCase->onCalculationUpdated();
+
+            if ( summaryCase->showRealizationDataSources() )
+            {
+                summaryCase->onCalculationUpdated();
+            }
         }
     }
 
@@ -92,12 +96,4 @@ void RimSummaryCalculationCollection::rebuildCaseMetaData()
 {
     ensureValidCalculationIds();
     updateDataDependingOnCalculations();
-}
-
-//--------------------------------------------------------------------------------------------------
-///
-//--------------------------------------------------------------------------------------------------
-void RimSummaryCalculationCollection::initAfterRead()
-{
-    rebuildCaseMetaData();
 }

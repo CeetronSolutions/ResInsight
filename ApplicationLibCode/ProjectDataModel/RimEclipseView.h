@@ -213,7 +213,7 @@ private:
 
     void updateFaultColors();
 
-    void syncronizeWellsWithResults();
+    void synchronizeWellsWithResults();
 
     void   onClampCurrentTimestep() override;
     size_t onTimeStepCountRequested() override;

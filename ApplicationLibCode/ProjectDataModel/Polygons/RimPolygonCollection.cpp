@@ -150,6 +150,15 @@ std::vector<RimPolygon*> RimPolygonCollection::allPolygons() const
 //--------------------------------------------------------------------------------------------------
 ///
 //--------------------------------------------------------------------------------------------------
+void RimPolygonCollection::appendPolygonMenuItems( caf::CmdFeatureMenuBuilder& menuBuilder )
+{
+    menuBuilder << "RicCreatePolygonFeature";
+    menuBuilder << "RicImportPolygonFileFeature";
+}
+
+//--------------------------------------------------------------------------------------------------
+///
+//--------------------------------------------------------------------------------------------------
 void RimPolygonCollection::onChildDeleted( caf::PdmChildArrayFieldHandle* childArray, std::vector<caf::PdmObjectHandle*>& referringObjects )
 {
     updateViewTreeItems();
@@ -169,8 +178,7 @@ void RimPolygonCollection::childFieldChangedByUi( const caf::PdmFieldHandle* cha
 //--------------------------------------------------------------------------------------------------
 void RimPolygonCollection::appendMenuItems( caf::CmdFeatureMenuBuilder& menuBuilder ) const
 {
-    menuBuilder << "RicCreatePolygonFeature";
-    menuBuilder << "RicImportPolygonFileFeature";
+    RimPolygonCollection::appendPolygonMenuItems( menuBuilder );
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -181,9 +189,7 @@ void RimPolygonCollection::updateViewTreeItems()
     RimProject* proj = RimProject::current();
 
     // Make sure the tree items are synchronized
-    std::vector<Rim3dView*> views;
-    proj->allViews( views );
-    for ( auto view : views )
+    for ( auto view : proj->allViews() )
     {
         view->updateViewTreeItems( RiaDefines::ItemIn3dView::POLYGON );
     }

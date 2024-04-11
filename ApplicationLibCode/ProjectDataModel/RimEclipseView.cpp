@@ -1133,7 +1133,7 @@ void RimEclipseView::onLoadDataAndUpdate()
 
     m_propertyFilterCollection()->loadAndInitializePropertyFilters();
 
-    faultCollection()->syncronizeFaults();
+    faultCollection()->synchronizeFaults();
 
     m_wellCollection->scaleWellDisks();
 
@@ -1142,9 +1142,9 @@ void RimEclipseView::onLoadDataAndUpdate()
     scheduleReservoirGridGeometryRegen();
     m_simWellsPartManager->clearGeometryCache();
 
-    syncronizeWellsWithResults();
+    synchronizeWellsWithResults();
 
-    syncronizeLocalAnnotationsFromGlobal();
+    synchronizeLocalAnnotationsFromGlobal();
 
     {
         // Update simulation well fractures after well cell results are imported
@@ -1610,7 +1610,7 @@ RimEclipseCase* RimEclipseView::eclipseCase() const
 
 */
 //--------------------------------------------------------------------------------------------------
-void RimEclipseView::syncronizeWellsWithResults()
+void RimEclipseView::synchronizeWellsWithResults()
 {
     if ( !( eclipseCase() && eclipseCase()->eclipseCaseData() ) ) return;
 
@@ -1816,7 +1816,7 @@ void RimEclipseView::updateDisplayModelForWellResults()
     m_reservoirGridPartManager->clearGeometryCache();
     m_simWellsPartManager->clearGeometryCache();
 
-    syncronizeWellsWithResults();
+    synchronizeWellsWithResults();
 
     onCreateDisplayModel();
     updateDisplayModelVisibility();
