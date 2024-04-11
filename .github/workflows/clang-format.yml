@@ -1,6 +1,9 @@
 name: clang-format
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**' # Ignore push events for tags: https://github.com/peter-evans/create-pull-request/blob/main/docs/examples.md#filtering-push-events
 
 jobs:
   clang-format-job:

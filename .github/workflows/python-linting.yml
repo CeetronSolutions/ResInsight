@@ -1,6 +1,10 @@
 name: Python Linting
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**' # Ignore push events for tags: https://github.com/peter-evans/create-pull-request/blob/main/docs/examples.md#filtering-push-events
+  pull_request:
 
 jobs:
   lint:
