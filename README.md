@@ -1,3 +1,7 @@
+# INFO
+
+This fork is intended for usage in the [Webviz](https://github.com/equinor/webviz/) project to utilize ResInsight for geometry extraction. The intent is to integrate ResInsight in headless mode in a docker container. Proto files are defined and gRPC interface is upgraded to provide the geometry extraction data.
+
 # ResInsight
 
 ResInsight is an open source, cross-platform 3D visualization and post processing tool for reservoir models and simulations. The system also constitutes a framework for further development and support for new data sources and visualization methods, e.g. additional solvers, seismic data, CSEM, geomechanics, and more. 
