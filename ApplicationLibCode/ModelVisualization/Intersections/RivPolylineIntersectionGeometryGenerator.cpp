@@ -104,8 +104,8 @@ void RivPolylineIntersectionGeometryGenerator::calculateArrays( cvf::UByteArray*
     // Weld vertices per polyline segment
     // - Low welding distance, as the goal is to weld duplicate vertices.
     // - Number of buckets is set per segment, utilizing number of cells intersecting the segment
-    const double weldingDistance = 1.0e-3;
-    const double weldingCellSize = 20.0 * weldingDistance;
+    const double weldingDistance = 1.0e-6;
+    const double weldingCellSize = 0.2;
 
     const size_t numPoints = m_polylineUtm.size();
     size_t       pointIdx  = 0;
