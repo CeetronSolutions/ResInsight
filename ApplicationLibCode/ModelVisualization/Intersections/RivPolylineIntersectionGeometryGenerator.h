@@ -20,7 +20,6 @@
 #pragma once
 
 #include "cvfArray.h"
-
 #include "cvfBoundingBox.h"
 #include "cvfVector3.h"
 

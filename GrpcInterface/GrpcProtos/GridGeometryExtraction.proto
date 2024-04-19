@@ -13,7 +13,7 @@ service GridGeometryExtraction
 
 message TimeElapsedInfo
 {
-	fixed32 totalTimeElapsedMs = 1; // Total time elapsed for the entire request
+    fixed32 totalTimeElapsedMs = 1; // Total time elapsed for the entire request
     map<string, fixed32> namedEventsAndTimeElapsedMs = 2; // Time elapsed for each custom named event
 }
 

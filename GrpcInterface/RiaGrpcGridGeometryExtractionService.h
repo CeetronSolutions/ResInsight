@@ -18,12 +18,16 @@
 #pragma once
 
 #include "GridGeometryExtraction.grpc.pb.h"
+
 #include "RiaApplication.h"
 #include "RiaGrpcGridGeometryExtractionServiceHelper.h"
 #include "RiaGrpcServiceInterface.h"
+
 #include "RigGridBase.h"
+
 #include "RimEclipseCase.h"
 #include "RimEclipseView.h"
+
 #include "RivGridPartMgr.h"
 
 #include "cvfArray.h"
@@ -84,6 +88,7 @@ private:
     RimEclipseCase*                                       m_eclipseCase                 = nullptr;
     std::unique_ptr<RigGridCellFaceVisibilityFilter>      m_surfaceFaceVisibilityFilter = nullptr;
     std::unique_ptr<RigGridCellFaultFaceVisibilityFilter> m_faultFaceVisibilityFilter   = nullptr;
+    cvf::ref<cvf::UByteArray>                             m_cellVisibilities            = nullptr;
 
     // Vertex welding
     // - Low welding distance, as the goal is to weld duplicate vertices

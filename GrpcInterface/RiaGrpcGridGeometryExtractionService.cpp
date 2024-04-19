@@ -18,13 +18,14 @@
 
 #include "RiaGrpcGridGeometryExtractionService.h"
 
-#include "qstring.h"
-
-#include "Commands/RicImportGeneralDataFeature.h"
 #include "RiaApplication.h"
 #include "RiaGrpcCallbacks.h"
 #include "RiaGrpcHelper.h"
+
+#include "Commands/RicImportGeneralDataFeature.h"
+
 #include "RifReaderSettings.h"
+
 #include "RigActiveCellInfo.h"
 #include "RigEclipseCaseData.h"
 #include "RigFemPartCollection.h"
@@ -33,6 +34,7 @@
 #include "RigGridBase.h"
 #include "RigMainGrid.h"
 #include "RigNNCData.h"
+
 #include "RimCase.h"
 #include "RimCellFilterCollection.h"
 #include "RimCellRangeFilter.h"
@@ -42,6 +44,7 @@
 #include "RimGeoMechCase.h"
 #include "RimGridView.h"
 #include "RimProject.h"
+
 #include "RivEclipseIntersectionGrid.h"
 #include "RivGridPartMgr.h"
 #include "RivPolylineIntersectionGeometryGenerator.h"
@@ -54,8 +57,8 @@
 #include "cvfDrawableGeo.h"
 #include "cvfStructGridGeometryGenerator.h"
 
-#include "qfileinfo.h"
-#include "qstring.h"
+#include <QFileInfo>
+#include <QString>
 
 //--------------------------------------------------------------------------------------------------
 ///
@@ -583,20 +586,19 @@ grpc::Status RiaGrpcGridGeometryExtractionService::initializeGridGeometryGenerat
     }
 
     // Cell visibilities
-    const int firstTimeStep    = 0;
-    auto*     cellVisibilities = new cvf::UByteArray( mainGrid->cellCount() );
-    view->calculateCurrentTotalCellVisibility( cellVisibilities, firstTimeStep ); // TODO: Check if this is correct way
-                                                                                  // to get cell visibilities
+    const int firstTimeStep = 0;
+    m_cellVisibilities      = new cvf::UByteArray( mainGrid->cellCount() );
+    view->calculateCurrentTotalCellVisibility( m_cellVisibilities.p(), firstTimeStep );
 
     // Face visibility filter
     m_surfaceFaceVisibilityFilter =
         std::make_unique<RigGridCellFaceVisibilityFilter>( RigGridCellFaceVisibilityFilter( mainGrid ) );
-    surfaceGeometryGenerator.setCellVisibility( cellVisibilities ); // Ownership transferred
+    surfaceGeometryGenerator.setCellVisibility( m_cellVisibilities.p() );
     surfaceGeometryGenerator.addFaceVisibilityFilter( m_surfaceFaceVisibilityFilter.get() );
 
     m_faultFaceVisibilityFilter =
         std::make_unique<RigGridCellFaultFaceVisibilityFilter>( RigGridCellFaultFaceVisibilityFilter( mainGrid ) );
-    faultGeometryGenerator.setCellVisibility( cellVisibilities ); // Ownership transferred
+    faultGeometryGenerator.setCellVisibility( m_cellVisibilities.p() );
     faultGeometryGenerator.addFaceVisibilityFilter( m_faultFaceVisibilityFilter.get() );
 
     return grpc::Status::OK;
@@ -614,8 +616,7 @@ grpc::Status RiaGrpcGridGeometryExtractionService::loadGridGeometryFromAbsoluteF
     readerSettings               = RifReaderSettings::createGridOnlyReaderSettings();
     readerSettings->importFaults = true;
 
-    // TODO: Set true or false?
-    bool createPlot       = true;
+    bool createPlot       = false;
     bool createView       = true;
     auto fileOpenMetaData = RicImportGeneralDataFeature::openEclipseFilesFromFileNames( QStringList{ absolutePath },
                                                                                         createPlot,

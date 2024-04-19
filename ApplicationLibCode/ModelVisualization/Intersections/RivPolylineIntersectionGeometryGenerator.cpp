@@ -173,7 +173,7 @@ void RivPolylineIntersectionGeometryGenerator::calculateArrays( cvf::UByteArray*
         // Intersection per grid cell - transform from set of triangles to polygon for cell
         for ( const auto globalCellIdx : columnCellCandidates )
         {
-            if ( ( visibleCells != nullptr ) && ( ( *visibleCells )[globalCellIdx] == 0 ) ) continue;
+            if ( visibleCells && ( ( *visibleCells )[globalCellIdx] == 0 ) ) continue;
             if ( !m_hexGrid->useCell( globalCellIdx ) ) continue;
 
             // Perform intersection and clipping of triangles using UTM-coordinates
