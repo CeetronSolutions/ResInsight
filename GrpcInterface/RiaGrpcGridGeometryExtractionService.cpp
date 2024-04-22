@@ -116,8 +116,10 @@ grpc::Status RiaGrpcGridGeometryExtractionService::GetGridSurface( grpc::ServerC
     {
         return grpc::Status( grpc::StatusCode::NOT_FOUND, "No eclipse view found" );
     }
-    eclipseView->setShowInactiveCells( true );
-    eclipseView->faultCollection()->setActive( false ); // TODO: Check if this is correct??
+
+    const bool showInactiveCells = request->includeinactivecells();
+    eclipseView->setShowInactiveCells( showInactiveCells );
+    eclipseView->faultCollection()->setActive( false );
 
     // Apply ijk-filtering - assuming 0-indexing from gRPC
     if ( request->has_ijkindexfilter() )
@@ -314,9 +316,11 @@ grpc::Status RiaGrpcGridGeometryExtractionService::CutAlongPolyline( grpc::Serve
         polylineUtmXy.push_back( cvf::Vec2d( xValue, yValue ) );
     }
 
-    RigActiveCellInfo* activeCellInfo    = nullptr; // No active cell info for grid
-    const bool         showInactiveCells = true;
-    auto               eclipseIntersectionGrid =
+    // RigActiveCellInfo* activeCellInfo = nullptr; // No active cell info for grid
+    RigActiveCellInfo* activeCellInfo =
+        m_eclipseCase->eclipseCaseData()->activeCellInfo( RiaDefines::PorosityModelType::MATRIX_MODEL );
+    const bool showInactiveCells = request->includeinactivecells();
+    auto       eclipseIntersectionGrid =
         RivEclipseIntersectionGrid( m_eclipseCase->mainGrid(), activeCellInfo, showInactiveCells );
 
     auto polylineIntersectionGenerator =

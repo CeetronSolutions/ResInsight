@@ -13,12 +13,14 @@ from rips.generated.GridGeometryExtraction_pb2 import *
 rips_instance = Instance.find()
 grid_geometry_extraction_stub = GridGeometryExtractionStub(rips_instance.channel)
 
-# grid_file_name = (
-#     "D:/Git/resinsight-tutorials/model-data/norne/NORNE_ATW2013_RFTPLT_V2.EGRID"
-# )
+grid_file_name = (
+    "D:/Git/resinsight-tutorials/model-data/norne/NORNE_ATW2013_RFTPLT_V2.EGRID"
+)
 # grid_file_name = "MOCKED_TEST_GRID"
 # grid_file_name = "D:/ResInsight/GRID__SNORRE_BASECASEGRID.roff"
-grid_file_name = "D:/ResInsight/GRID__DROGON_13M.roff"
+# grid_file_name = "D:/ResInsight/GRID__DROGON_13M.roff"
+
+include_inactive_cells = False
 
 ijk_index_filter = GridGeometryExtraction__pb2.IJKIndexFilter(
     iMin=15, iMax=30, jMin=30, jMax=90, kMin=1, kMax=12
@@ -28,6 +30,7 @@ ijk_index_filter = None
 get_grid_surface_request = GridGeometryExtraction__pb2.GetGridSurfaceRequest(
     gridFilename=grid_file_name,
     ijkIndexFilter=ijk_index_filter,
+    includeInactiveCells=include_inactive_cells,
     cellIndexFilter=None,
     propertyFilter=None,
 )

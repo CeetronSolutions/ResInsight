@@ -16,6 +16,8 @@ grid_file_name = (
     "D:/Git/resinsight-tutorials/model-data/norne/NORNE_ATW2013_RFTPLT_V2.EGRID"
 )
 
+include_inactive_cells = True
+
 # Test polylines
 mocked_model_fence_poly_line_utm_xy = [
     11.2631,
@@ -51,6 +53,7 @@ for i in range(num_calls):
     cut_along_polyline_request = GridGeometryExtraction__pb2.CutAlongPolylineRequest(
         gridFilename=grid_file_name,
         fencePolylineUtmXY=fence_poly_line_utm_xy,
+        includeInactiveCells=include_inactive_cells,
     )
     cut_along_polyline_response: (
         GridGeometryExtraction__pb2.CutAlongPolylineResponse

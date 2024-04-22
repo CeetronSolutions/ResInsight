@@ -19,7 +19,9 @@ grid_file_name = "MOCKED_TEST_GRID"
 grid_file_name = (
     "D:/Git/resinsight-tutorials/model-data/norne/NORNE_ATW2013_RFTPLT_V2.EGRID"
 )
-grid_file_name = "D:/ResInsight/GRID__DROGON_13M.roff"
+# grid_file_name = "D:/ResInsight/GRID__DROGON_13M.roff"
+
+include_inactive_cells = True
 
 # Test polylines
 mocked_model_fence_poly_line_utm_xy = [
@@ -68,11 +70,13 @@ for i in range(1, num_polyline_samples):
 drogon_13M_case_poly_line_utm_xy.append(drogon_13M_end_utm_xy[0])
 drogon_13M_case_poly_line_utm_xy.append(drogon_13M_end_utm_xy[1])
 
-fence_poly_line_utm_xy = drogon_13M_case_poly_line_utm_xy
+# fence_poly_line_utm_xy = drogon_13M_case_poly_line_utm_xy
+fence_poly_line_utm_xy = norne_case_single_segment_poly_line_gap_utm_xy
 
 cut_along_polyline_request = GridGeometryExtraction__pb2.CutAlongPolylineRequest(
     gridFilename=grid_file_name,
     fencePolylineUtmXY=fence_poly_line_utm_xy,
+    includeInactiveCells=include_inactive_cells,
 )
 cut_along_polyline_response: GridGeometryExtraction__pb2.CutAlongPolylineResponse = (
     grid_geometry_extraction_stub.CutAlongPolyline(cut_along_polyline_request)

@@ -17,6 +17,8 @@ grid_file_name = (
 # )
 ijk_index_filter = None
 
+include_inactive_cells = True
+
 num_calls = 100
 sleep_time_s = 0.1
 
@@ -27,6 +29,7 @@ for i in range(num_calls):
         ijkIndexFilter=ijk_index_filter,
         cellIndexFilter=None,
         propertyFilter=None,
+        includeInactiveCells=include_inactive_cells,
     )
     get_grid_surface_response: GridGeometryExtraction__pb2.GetGridSurfaceResponse = (
         grid_geometry_extraction_stub.GetGridSurface(get_grid_surface_request)

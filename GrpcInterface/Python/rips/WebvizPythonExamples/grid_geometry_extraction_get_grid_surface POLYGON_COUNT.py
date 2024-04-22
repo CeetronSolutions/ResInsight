@@ -19,6 +19,8 @@ grid_file_name = (
 # grid_file_name = "MOCKED_TEST_GRID"
 # grid_file_name = "D:/ResInsight/GRID__SNORRE_BASECASEGRID.roff"
 
+include_inactive_cells = True
+
 ijk_index_filter = GridGeometryExtraction__pb2.IJKIndexFilter(
     iMin=-1, iMax=-1, jMin=-1, jMax=-1, kMin=1, kMax=12
 )
@@ -29,6 +31,7 @@ get_grid_surface_request = GridGeometryExtraction__pb2.GetGridSurfaceRequest(
     ijkIndexFilter=ijk_index_filter,
     cellIndexFilter=None,
     propertyFilter=None,
+    includeInactiveCells=include_inactive_cells,
 )
 get_grid_surface_response: GridGeometryExtraction__pb2.GetGridSurfaceResponse = (
     grid_geometry_extraction_stub.GetGridSurface(get_grid_surface_request)

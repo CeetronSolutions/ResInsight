@@ -43,9 +43,10 @@ message PropertyFilter
 message GetGridSurfaceRequest
 {
     string gridFilename = 1;
-    IJKIndexFilter ijkIndexFilter = 2;
-    CellIndexFilter cellIndexFilter = 3;
-    PropertyFilter propertyFilter = 4;
+    bool includeInactiveCells = 2;
+    IJKIndexFilter ijkIndexFilter = 3;
+    CellIndexFilter cellIndexFilter = 4;
+    PropertyFilter propertyFilter = 5;
 }
     
 message GetGridSurfaceResponse
@@ -63,6 +64,7 @@ message CutAlongPolylineRequest
 {
     string gridFilename = 1;
     repeated double fencePolylineUtmXY = 2;
+    bool includeInactiveCells = 3;
 }
 
 message FenceMeshSection

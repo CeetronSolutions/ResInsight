@@ -21,6 +21,8 @@ grid_file_name = (
 )
 grid_file_name = "D:/ResInsight/GRID__DROGON_13M.roff"
 
+include_inactive_cells = True
+
 # Test polylines
 mocked_model_fence_poly_line_utm_xy = [
     11.2631,
@@ -56,7 +58,7 @@ num_j_samples = 438
 # drogon_13M_start_utm_xy = [457026, 5.93502e06]
 # drogon_13M_end_utm_xy = [466228, 5.93108e06]
 
-num_polyline_samples = 10
+num_polyline_samples = 1200
 drogon_13M_case_poly_line_utm_xy = [
     drogon_13M_start_utm_xy[0],
     drogon_13M_start_utm_xy[1],
@@ -79,6 +81,7 @@ fence_poly_line_utm_xy = drogon_13M_case_poly_line_utm_xy
 cut_along_polyline_request = GridGeometryExtraction__pb2.CutAlongPolylineRequest(
     gridFilename=grid_file_name,
     fencePolylineUtmXY=fence_poly_line_utm_xy,
+    includeInactiveCells=include_inactive_cells,
 )
 cut_along_polyline_response: GridGeometryExtraction__pb2.CutAlongPolylineResponse = (
     grid_geometry_extraction_stub.CutAlongPolyline(cut_along_polyline_request)
