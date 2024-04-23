@@ -40,6 +40,7 @@
 #include "RimCellRangeFilter.h"
 #include "RimEclipseCase.h"
 #include "RimEclipseView.h"
+#include "RimEclipseViewCollection.h"
 #include "RimFaultInViewCollection.h"
 #include "RimGeoMechCase.h"
 #include "RimGridView.h"
@@ -460,10 +461,14 @@ void RiaGrpcGridGeometryExtractionService::tearDownExistingViewsInEclipseCase()
         return;
     }
 
-    std::vector<RimEclipseView*> eclipseViews = m_eclipseCase->reservoirViews.childrenByType();
+    std::vector<RimEclipseView*> eclipseViews       = m_eclipseCase->reservoirViews();
+    RimEclipseViewCollection*    caseViewCollection = m_eclipseCase->viewCollection();
     for ( const auto& view : eclipseViews )
     {
-        m_eclipseCase->reservoirViews.removeChild( view );
+        if ( caseViewCollection )
+        {
+            caseViewCollection->removeView( view );
+        }
         delete view;
     }
     m_eclipseCase->updateAllRequiredEditors();
