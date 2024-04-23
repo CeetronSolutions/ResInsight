@@ -1116,14 +1116,20 @@ void RigCaseCellResultsData::createPlaceholderResultEntries()
 
     // Cell Volume
     {
-        addStaticScalarResult( RiaDefines::ResultCatType::STATIC_NATIVE, RiaResultNames::riCellVolumeResultName(), needsToBeStored, 0 );
+        if ( !hasResultEntry( RigEclipseResultAddress( RiaDefines::ResultCatType::STATIC_NATIVE, RiaResultNames::riCellVolumeResultName() ) ) )
+        {
+            addStaticScalarResult( RiaDefines::ResultCatType::STATIC_NATIVE, RiaResultNames::riCellVolumeResultName(), needsToBeStored, 0 );
+        }
     }
 
     // Mobile Pore Volume
     {
         if ( hasResultEntry( RigEclipseResultAddress( RiaDefines::ResultCatType::STATIC_NATIVE, "PORV" ) ) )
         {
-            addStaticScalarResult( RiaDefines::ResultCatType::STATIC_NATIVE, RiaResultNames::mobilePoreVolumeName(), needsToBeStored, 0 );
+            if ( !hasResultEntry( RigEclipseResultAddress( RiaDefines::ResultCatType::STATIC_NATIVE, RiaResultNames::mobilePoreVolumeName() ) ) )
+            {
+                addStaticScalarResult( RiaDefines::ResultCatType::STATIC_NATIVE, RiaResultNames::mobilePoreVolumeName(), needsToBeStored, 0 );
+            }
         }
     }
 
@@ -1641,9 +1647,12 @@ size_t RigCaseCellResultsData::findOrLoadKnownScalarResultForTimeStep( const Rig
             m_cellScalarResults[scalarResultIndex].resize( 1 );
 
             std::vector<double>& values = m_cellScalarResults[scalarResultIndex][0];
-            if ( !m_readerInterface->staticResult( resultName, m_porosityModel, &values ) )
+            if ( values.empty() )
             {
-                resultLoadingSuccess = false;
+                if ( !m_readerInterface->staticResult( resultName, m_porosityModel, &values ) )
+                {
+                    resultLoadingSuccess = false;
+                }
             }
         }
 

@@ -81,14 +81,6 @@ RimEclipseResultCase::RimEclipseResultCase()
 {
     CAF_PDM_InitScriptableObject( "Eclipse Case", ":/Case48x48.png", "", "The Regular Eclipse Results Case" );
 
-    auto defaultReader = RiaPreferences::current()->gridModelReader();
-    CAF_PDM_InitField( &m_gridModelReader, "gridModelReader", caf::AppEnum<RiaDefines::GridModelReader>( defaultReader ), "Grid Model Reader" );
-    if ( !RiaApplication::enableDevelopmentFeatures() )
-    {
-        m_gridModelReader.xmlCapability()->disableIO();
-        m_gridModelReader.uiCapability()->setUiHidden( true );
-    }
-
     CAF_PDM_InitFieldNoDefault( &m_unitSystem, "UnitSystem", "Unit System" );
     m_unitSystem.registerGetMethod( RimProject::current(), &RimProject::commonUnitSystemForAllCases );
     m_unitSystem.uiCapability()->setUiReadOnly( true );
@@ -145,7 +137,9 @@ bool RimEclipseResultCase::importGridAndResultMetaData( bool showTimeStepFilter 
             return false;
         }
 
-        if ( m_gridModelReader == RiaDefines::GridModelReader::LIBECL )
+        auto defaultReader = RiaPreferences::current()->gridModelReader();
+
+        if ( defaultReader == RiaDefines::GridModelReader::RESDATA )
         {
             auto readerEclipseOutput = new RifReaderEclipseOutput();
 
@@ -374,8 +368,6 @@ void RimEclipseResultCase::ensureRftDataIsImported()
 
     if ( rftFileInfo.exists() )
     {
-        RiaLogging::info( QString( "RFT file found" ) );
-
         if ( m_useOpmRftReader )
         {
             m_readerOpmRft = new RifReaderOpmRft( rftFileInfo.filePath() );
@@ -500,12 +492,11 @@ RimEclipseResultCase::~RimEclipseResultCase()
 {
     // Disconnect all comparison views. In debug build on Windows, a crash occurs. The comparison view is also set to zero in the destructor
     // of Rim3dView()
-    for ( auto v : reservoirViews )
+    for ( auto v : reservoirViews() )
     {
         if ( v ) v->setComparisonView( nullptr );
     }
 
-    reservoirViews.deleteChildren();
     m_flowDiagSolutions.deleteChildren();
 }
 
@@ -623,7 +614,6 @@ bool RimEclipseResultCase::hasSourSimFile()
 //--------------------------------------------------------------------------------------------------
 void RimEclipseResultCase::defineUiOrdering( QString uiConfigName, caf::PdmUiOrdering& uiOrdering )
 {
-    uiOrdering.add( &m_gridModelReader );
     uiOrdering.add( &m_caseUserDescription );
     uiOrdering.add( &m_displayNameOption );
     uiOrdering.add( &m_caseId );
